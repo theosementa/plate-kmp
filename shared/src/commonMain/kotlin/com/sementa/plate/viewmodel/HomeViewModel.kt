@@ -14,7 +14,7 @@ class HomeViewModel: BaseViewModel() {
     private val _plateInput: MutableStateFlow<String> = MutableStateFlow("")
     val plateInput: StateFlow<String> get() = _plateInput.asStateFlow()
 
-    private val _vehicleState: MutableStateFlow<VehicleState> = MutableStateFlow(VehicleState(isLoading = true))
+    private val _vehicleState: MutableStateFlow<VehicleState> = MutableStateFlow(VehicleState())
     val vehicleState: StateFlow<VehicleState> get() = _vehicleState.asStateFlow()
 
     fun updatePlateInput(newInput: String) {
