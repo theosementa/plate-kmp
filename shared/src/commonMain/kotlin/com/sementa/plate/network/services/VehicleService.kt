@@ -7,7 +7,11 @@ import com.sementa.theoportfolio.network.generic.NetworkService
 class VehicleService {
 
     suspend fun fetchVehicleFromPlate(plate: String): VehicleModel {
-        return NetworkService().sendRequest(VehicleAPIRequester.fetchFromPlate(plate))
+        return try {
+            NetworkService().sendRequest(VehicleAPIRequester.fetchFromPlate(plate))
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
 }

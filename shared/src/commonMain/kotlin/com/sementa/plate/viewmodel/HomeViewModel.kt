@@ -11,14 +11,25 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel: BaseViewModel() {
 
+    private val _plateInput: MutableStateFlow<String> = MutableStateFlow("")
+    val plateInput: StateFlow<String> get() = _plateInput.asStateFlow()
+
     private val _vehicleState: MutableStateFlow<VehicleState> = MutableStateFlow(VehicleState(isLoading = true))
     val vehicleState: StateFlow<VehicleState> get() = _vehicleState.asStateFlow()
 
-    fun fetchVehicleFromPlate(plate: String) {
+    fun updatePlateInput(newInput: String) {
+        _plateInput.value = newInput
+    }
+
+    fun fetchVehicleFromPlate() {
         scope.launch {
             _vehicleState.emit(VehicleState(isLoading = true))
-            val response: VehicleModel = VehicleService().fetchVehicleFromPlate(plate)
-            _vehicleState.emit(VehicleState(vehicle = response))
+            try {
+                val response: VehicleModel = VehicleService().fetchVehicleFromPlate(plateInput.value)
+                _vehicleState.emit(VehicleState(vehicle = response))
+            } catch (e: Exception) {
+                _vehicleState.emit(VehicleState(error = e.message))
+            }
         }
     }
 

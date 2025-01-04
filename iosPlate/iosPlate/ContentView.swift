@@ -5,6 +5,7 @@ import shared
 class HomeViewModelWrapper: ObservableObject {
     let homeViewModel: HomeViewModel
     @Published var vehicleState: VehicleState? = nil
+    @Published var placeInput: String = ""
     
     init() {
         self.homeViewModel = HomeViewModel()
@@ -31,10 +32,15 @@ struct ContentView: View {
                 }
             }
             
+            TextField("Plate", text: $viewModel.placeInput)
+            
             Button {
-                viewModel.homeViewModel.fetchVehicleFromPlate(plate: "GX-318-RV")
+                viewModel.homeViewModel.fetchVehicleFromPlate()
             } label: {
                 Text("Search for plate")
+            }
+            .onChange(of: viewModel.placeInput) { newValue in
+                viewModel.homeViewModel.updatePlateInput(newInput: newValue)
             }
         }
         .onAppear {

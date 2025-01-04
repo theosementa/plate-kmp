@@ -23,28 +23,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column {
-                        TextButton(onClick = {
-                            homeViewModel.fetchVehicleFromPlate("GX-318-RV")
-                        }) {
-                            Text(text = "Search for plate")
-                        }
-                    }
+                    HomeView(viewModel = homeViewModel)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
-
-@Preview
-@Composable
-fun DefaultPreview() {
-    MyApplicationTheme {
-        GreetingView("Hello, Android!")
     }
 }
