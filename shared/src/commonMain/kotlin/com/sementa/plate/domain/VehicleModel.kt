@@ -18,10 +18,9 @@ data class VehicleModel(
     val registration: String? = null,
     val powerCV: Int? = null,
     val powerKW: Int? = null,
-    val turbo: Boolean? = null,
+    val turbo: String? = null,
     val gearbox: String? = null,
     val propulsion: String? = null,
     val circulationDate: String? = null,
     val serialNumber: String? = null
-) {
-}
+)
