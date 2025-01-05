@@ -13,3 +13,6 @@ val Color.Companion.Background200: Color
 
 val Color.Companion.Background300: Color
     get() = Color(0xFF39393D)
+
+val Color.Companion.Blue500: Color
+    get() = Color(0xFF007AFF)

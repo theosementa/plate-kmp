@@ -10,6 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.sementa.plate.viewmodel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
@@ -18,12 +23,24 @@ class MainActivity : ComponentActivity() {
         val homeViewModel: HomeViewModel by viewModels()
 
         setContent {
+            val navController = rememberNavController()
+
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeView(viewModel = homeViewModel)
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") {
+                            HomeView(viewModel = homeViewModel, navController = navController)
+                        }
+                        composable(
+                            route = "vehicle/{vehicleJson}",
+                            arguments = listOf(navArgument("vehicleJson") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            VehicleView(navBackStackEntry = backStackEntry)
+                        }
+                    }
                 }
             }
         }

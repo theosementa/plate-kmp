@@ -9,39 +9,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.sementa.plate.android.utilities.Background100
 import com.sementa.plate.android.utilities.Background300
+import com.sementa.plate.android.utilities.Blue500
 import com.sementa.plate.viewmodel.HomeViewModel
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun HomeView(viewModel: HomeViewModel) {
+fun HomeView(viewModel: HomeViewModel, navController: NavController) {
     val vehicleState by viewModel.vehicleState.collectAsState()
     val plateInput by viewModel.plateInput.collectAsState()
 
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize(1f)
@@ -64,7 +62,7 @@ fun HomeView(viewModel: HomeViewModel) {
                 ),
                 cursorBrush = SolidColor(Color.White)
             )
-            
+
             if (plateInput.isEmpty()) {
                 Text(
                     text = "Entrer une plaque...",
@@ -72,18 +70,30 @@ fun HomeView(viewModel: HomeViewModel) {
                 )
             }
         }
-        
-        TextButton(onClick = {
-            println("Plaque: " + viewModel.plateInput.value)
-            viewModel.fetchVehicleFromPlate()
-        }) {
-            Text(text = "Rechercher")
+
+        TextButton(
+            onClick = {
+                println("Plaque: " + viewModel.plateInput.value)
+                viewModel.fetchVehicleFromPlate()
+            },
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .background(Color.Blue500, RoundedCornerShape(12.dp))
+        ) {
+            Text(
+                text = "Rechercher",
+                color = Color.White,
+                textAlign = TextAlign.Center,
+            )
         }
 
         when {
-            vehicleState.isLoading -> Text("Loading...")
-            vehicleState.vehicle != null -> Text("Vehicle: ${vehicleState.vehicle}")
-            else -> Text("No vehicle found")
+            vehicleState.vehicle != null -> {
+                LaunchedEffect(vehicleState.vehicle) {
+                    val vehicleJson = Json.encodeToString(vehicleState.vehicle)
+                    navController.navigate("vehicle/$vehicleJson")
+                }
+            }
         }
     }
 }
