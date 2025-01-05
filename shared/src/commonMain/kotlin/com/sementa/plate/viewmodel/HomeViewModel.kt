@@ -3,6 +3,7 @@ package com.sementa.plate.viewmodel
 import com.sementa.plate.domain.VehicleModel
 import com.sementa.plate.network.services.VehicleService
 import com.sementa.plate.network.states.VehicleState
+import com.sementa.plate.stores.VehicleStore
 import com.sementa.plate.utilities.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,7 @@ class HomeViewModel: BaseViewModel() {
             try {
                 val response: VehicleModel = VehicleService().fetchVehicleFromPlate(plateInput.value)
                 _vehicleState.emit(VehicleState(vehicle = response))
+                VehicleStore.shared.addVehicle(vehicle = response)
             } catch (e: Exception) {
                 _vehicleState.emit(VehicleState(error = e.message))
             }

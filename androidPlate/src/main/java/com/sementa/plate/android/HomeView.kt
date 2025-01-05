@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,14 +32,14 @@ import androidx.navigation.NavController
 import com.sementa.plate.android.utilities.Background100
 import com.sementa.plate.android.utilities.Background300
 import com.sementa.plate.android.utilities.Blue500
+import com.sementa.plate.stores.VehicleStore
 import com.sementa.plate.viewmodel.HomeViewModel
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeView(viewModel: HomeViewModel, navController: NavController) {
     val vehicleState by viewModel.vehicleState.collectAsState()
     val plateInput by viewModel.plateInput.collectAsState()
+    val vehicles by VehicleStore.shared.vehicles.collectAsState()
 
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
@@ -73,27 +76,29 @@ fun HomeView(viewModel: HomeViewModel, navController: NavController) {
 
         TextButton(
             onClick = {
-                println("Plaque: " + viewModel.plateInput.value)
                 viewModel.fetchVehicleFromPlate()
             },
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .background(Color.Blue500, RoundedCornerShape(12.dp))
         ) {
-            Text(
-                text = "Rechercher",
-                color = Color.White,
-                textAlign = TextAlign.Center,
-            )
-        }
-
-        when {
-            vehicleState.vehicle != null -> {
-                LaunchedEffect(vehicleState.vehicle) {
-                    val vehicleJson = Json.encodeToString(vehicleState.vehicle)
-                    navController.navigate("vehicle/$vehicleJson")
-                }
+            if (vehicleState.isLoading) {
+                CircularProgressIndicator(color = Color.White)
+            } else {
+                Text(
+                    text = "Rechercher",
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
+
+        LazyColumn {
+            items(vehicles) { vehicle ->
+                vehicle.brand?.let { Text(text = it) }
+            }
+        }
+
+        
     }
 }

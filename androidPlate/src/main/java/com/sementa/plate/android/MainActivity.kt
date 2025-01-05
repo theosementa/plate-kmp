@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sementa.plate.android.navigation.AppNavHost
 import com.sementa.plate.viewmodel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
@@ -30,17 +31,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavHost(navController = navController, startDestination = "home") {
-                        composable("home") {
-                            HomeView(viewModel = homeViewModel, navController = navController)
-                        }
-                        composable(
-                            route = "vehicle/{vehicleJson}",
-                            arguments = listOf(navArgument("vehicleJson") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            VehicleView(navBackStackEntry = backStackEntry)
-                        }
-                    }
+                    AppNavHost(
+                        navController = rememberNavController(),
+                        homeViewModel = homeViewModel
+                    )
                 }
             }
         }
